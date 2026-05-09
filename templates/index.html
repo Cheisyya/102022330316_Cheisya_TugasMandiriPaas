@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}To-Do List{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Add New Task</h5>
+        <form method="post" action="{{ url_for('create_task') }}" class="d-flex gap-2">
+          <input type="text" class="form-control" name="title" placeholder="Enter task title" maxlength="200" required>
+          <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Task List</h5>
+        {% if tasks %}
+          <ul class="list-group list-group-flush">
+            {% for task in tasks %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="{% if task.completed %}text-decoration-line-through text-muted{% endif %}">
+                    {{ task.title }}
+                  </span>
+                  <small class="d-block text-muted">Created: {{ task.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                </div>
+                <div class="d-flex gap-2">
+                  <form method="post" action="{{ url_for('toggle_task', id=task.id) }}">
+                    <button class="btn btn-sm {% if task.completed %}btn-warning{% else %}btn-success{% endif %}" type="submit">
+                      {% if task.completed %}Undo{% else %}Complete{% endif %}
+                    </button>
+                  </form>
+                  <form method="post" action="{{ url_for('delete_task', id=task.id) }}">
+                    <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                  </form>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-muted mb-0">No tasks yet. Add your first task.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
